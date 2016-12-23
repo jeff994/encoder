@@ -1,4 +1,10 @@
-#include "ros/ros.h"
+yy
+
+
+
+
+
+yy#include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "serial/serial.h"
 #include <sstream>
@@ -17,7 +23,7 @@ int main(int argc, char **argv)
  	ros::Publisher chatter_pub = n.advertise<std_msgs::String>("encoder", 1000);
 	serial::Serial my_serial("/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0", 4800, serial::Timeout::simpleTimeout(1000));
 
-   	ros::Rate loop_rate(12);
+   	ros::Rate loop_rate(20);
 
    	if(my_serial.isOpen())
     		std::cout << " Yes." << std::endl;
@@ -32,7 +38,7 @@ int main(int argc, char **argv)
 
  	while (true)
  	{
-		ROS_INFO("Start loop");
+    		std::cout << " Yes." << std::endl;
 		std_msgs::String msg;
     		std::string result; 
 		
@@ -57,7 +63,7 @@ int main(int argc, char **argv)
 			if(value[1] == 1) value[0] = -value[0];
 			if(value[3] == 1) value[2] = -value[2]; 
 			std::stringstream ssout;
-			ssout <<  value[2] << " "  << value[0];
+			ssout <<  value[0] << " "  << value[2];
 			msg.data = ssout.str() ;
 			ROS_INFO("%s", msg.data.c_str());
 			chatter_pub.publish(msg);
@@ -65,9 +71,8 @@ int main(int argc, char **argv)
 		}	
     		ros::spinOnce();
 
-    		//loop_rate.sleep();
+    		loop_rate.sleep();
    		 ++count;
-		ROS_INFO("End loop");
   	}
   	return 0;
 }
