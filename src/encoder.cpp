@@ -54,8 +54,8 @@ int main(int argc, char **argv)
 			{
 				value[i] = atoi(vstrings[i].c_str()); 
 			}
-			if(value[1] == 1) value[0] = -value[0];
-			if(value[3] == 1) value[2] = -value[2]; 
+			if(value[1] == 0) value[0] = -value[0];
+			if(value[3] == 0) value[2] = -value[2]; 
 			std::stringstream ssout;
 			ssout <<  value[2] << " "  << value[0];
 			msg.data = ssout.str() ;
