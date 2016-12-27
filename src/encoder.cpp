@@ -15,7 +15,7 @@ int main(int argc, char **argv)
   	ros::init(argc, argv, "encoder");
   	ros::NodeHandle n;
  	ros::Publisher chatter_pub = n.advertise<std_msgs::String>("encoder", 1000);
-	serial::Serial my_serial("/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0", 4800, serial::Timeout::simpleTimeout(1000));
+	serial::Serial my_serial("/dev/serial/by-id/usb-Arduino__www.arduino.cc__Arduino_Uno_75533353637351616171-if00", 4800, serial::Timeout::simpleTimeout(1000));
 
    	ros::Rate loop_rate(12);
 
