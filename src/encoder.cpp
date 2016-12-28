@@ -30,6 +30,7 @@ int main(int argc, char **argv)
 {
   	ros::init(argc, argv, "encoder");
   	ros::NodeHandle n;
+    ros::Publisher encoder_pub = n.advertise<std_msgs::String>("encoder", 1000);
 
  	while (ros::ok())
 		ROS_INFO("Start loop");
@@ -67,7 +68,7 @@ int main(int argc, char **argv)
 			ssout <<  value[2] << " "  << value[0];
 			msg.data = ssout.str() ;
 			ROS_INFO("%s", msg.data.c_str());
-            chatter_pub.publish(msg);
+            ncoder_pub.publish(msg);
 		}	
     	
         ros::spinOnce();
