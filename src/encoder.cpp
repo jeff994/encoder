@@ -11,17 +11,17 @@
 #include <iterator>
 
 // global setting for the serial port for encoder
-serial::Serial encoder_serial;
+serial::Serial encoder_serial();
 std::string sPort("/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0");
 int nBaudrate = 4800; 
-encoder_serial.setPort(sPort);
-encoder_serial.setBaudrate(nBaudrate);
-encoder_serial.setTimeout(1000);
 
 // Try reopening serial port etc 
 bool OpenSerial()
 {
-    if(encoder_serial.isOpen()) return true; 
+    if(encoder_serial.isOpen()) return true;
+    encoder_serial.setPort(sPort);
+    encoder_serial.setBaudrate(nBaudrate);
+    encoder_serial.setTimeout(1000); 
     encoder_serial.open();
     return encoder_serial.isOpen();
 }
