@@ -10,50 +10,42 @@
 #include <algorithm>
 #include <iterator>
 
-// global setting for the serial port for encoder
-serial::Serial encoder_serial();
-std::string sPort("/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0");
-int nBaudrate = 4800; 
-
-// Try reopening serial port etc 
-bool OpenSerial()
-{
-    if(encoder_serial.isOpen()) return true;
-    encoder_serial.setPort(sPort);
-    encoder_serial.setBaudrate(nBaudrate);
-    encoder_serial.setTimeout(1000); 
-    encoder_serial.open();
-    return encoder_serial.isOpen();
-}
-
 int main(int argc, char **argv)
 {
   	ros::init(argc, argv, "encoder");
   	ros::NodeHandle n;
-    ros::Publisher encoder_pub = n.advertise<std_msgs::String>("encoder", 1000);
+ 	ros::Publisher chatter_pub = n.advertise<std_msgs::String>("encoder", 1000);
+	serial::Serial my_serial("/dev/serial/by-id/usb-Arduino__www.arduino.cc__Arduino_Uno_75533353637351616171-if00", 4800, serial::Timeout::simpleTimeout(1000));
 
- 	while (ros::ok())
+   	ros::Rate loop_rate(12);
+
+   	if(my_serial.isOpen())
+    		std::cout << " Yes." << std::endl;
+  	else
+	{
+    		std::cout << " The serial port is not correct." << std::endl;
+		return 0; 
+	}
+
+  	int count = 0;
+ 
+
+ 	while (true)
+ 	{
 		ROS_INFO("Start loop");
 		std_msgs::String msg;
-    	std::string result; 
-		if(encoder_serial() == false) 
-            ROS_INFO("Failed to open serial port, try again ...");
-            usleep(milliseconds*1000)
-            continue 
-
-   	 	size_t n_size = encoder_serial.readline(result); 
+    		std::string result; 
+		
+   	 	size_t n_size = my_serial.readline(result); 
 		std::stringstream ss(result);
 		
 		std::istream_iterator<std::string> begin(ss);
 		std::istream_iterator<std::string> end;
 		std::vector<std::string> vstrings(begin, end);
-    	ROS_INFO("%s", result.c_str());
-
-        
+    		 ROS_INFO("%s", result.c_str());
 		if(vstrings.size() != 4)
 		{	
-			ROS_INFO("Message %s format is not correct", result.c_str());
-            continue;
+			std::cout << "message is not correct" << std::endl;
 		}
 		else
 		{
@@ -68,10 +60,13 @@ int main(int argc, char **argv)
 			ssout <<  value[2] << " "  << value[0];
 			msg.data = ssout.str() ;
 			ROS_INFO("%s", msg.data.c_str());
-            ncoder_pub.publish(msg);
+			chatter_pub.publish(msg);
+
 		}	
-    	
-        ros::spinOnce();
+    		ros::spinOnce();
+
+    		//loop_rate.sleep();
+   		 ++count;
 		ROS_INFO("End loop");
   	}
   	return 0;
