@@ -30,7 +30,6 @@ int main(int argc, char **argv)
   	ros::init(argc, argv, "encoder");
   	ros::NodeHandle n;
  	while (ros::ok())
- 	{
 		ROS_INFO("Start loop");
 		std_msgs::String msg;
     	std::string result; 
