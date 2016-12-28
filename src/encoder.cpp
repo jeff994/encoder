@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 			if(value[1] == 0) value[0] = -value[0];
 			if(value[3] == 0) value[2] = -value[2]; 
 			std::stringstream ssout;
-			ssout <<  value[2] << " "  << value[0];
+			ssout <<  value[0] << " "  << value[2];
 			msg.data = ssout.str() ;
 			ROS_INFO("%s", msg.data.c_str());
 			chatter_pub.publish(msg);
