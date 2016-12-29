@@ -41,7 +41,7 @@ int main(int argc, char **argv)
  	{
 		ROS_INFO("Start loop");
 		if(openSerial() == false)
-			ROS_INFO("Serial port is not connected, trying to open agin...")
+			ROS_INFO("Serial port is not connected, trying to open agin...");
 			usleep(100000);
 			continue; 
 		std_msgs::String msg;
