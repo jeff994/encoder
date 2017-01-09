@@ -12,7 +12,7 @@
 
 // global setting for the serial port for encoder
 serial::Serial encoder_serial;
-std::string sPort("/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0");
+std::string sPort("/dev/serial/by-id/uusb-Arduino__www.arduino.cc__Arduino_Uno_854383630393512042A0-if00");
 int nBaudrate = 4800; 
 encoder_serial.setPort(sPort);
 encoder_serial.setBaudrate(nBaudrate);
