@@ -9,6 +9,8 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <math.h>
+#include <bitset>
 
 // global setting for the serial port for encoder
 serial::Serial encoder_serial;
@@ -17,12 +19,36 @@ int nBaudrate = 4800;
 encoder_serial.setPort(sPort);
 encoder_serial.setBaudrate(nBaudrate);
 encoder_serial.setTimeout(1000);
+ros::Publisher encoder_pub = n.advertise<std_msgs::String>("encoder", 1000);
 
 bool OpenSerial()
 {
     if(encoder_serial.isOpen()) return true; 
     encoder_serial.open();
     return encoder_serial.isOpen();
+}
+
+int GetEncoderValue(std::string &input)
+{
+	int x;   
+	std::stringstream ss;
+	ss << std::hex << "89C4";
+	ss >> x;
+	std::bitset<16> foo(x);
+	
+	// If first bit is 1 then the value should be negative (backward )
+	if(foo.test(15) == 1)
+	{
+		foo.set(15, 0);
+		x = foo.to_ulong(); 
+		x = -x;
+	}
+	// Otherwise forward 
+	else
+	{
+		x = foo.to_ulong(); 
+	}
+	return x; 
 }
 
 int main(int argc, char **argv)
@@ -34,9 +60,11 @@ int main(int argc, char **argv)
 		std_msgs::String msg;
     	std::string result; 
 		if(encoder_serial() == false) 
+		{
             ROS_INFO("Failed to open serial port, try again ...");
-            usleep(milliseconds*1000)
-            continue 
+            usleep(milliseconds*1000);
+            continue;
+        }
 
    	 	size_t n_size = encoder_serial.readline(result); 
 		std::stringstream ss(result);
@@ -44,7 +72,18 @@ int main(int argc, char **argv)
 		std::istream_iterator<std::string> begin(ss);
 		std::istream_iterator<std::string> end;
 		std::vector<std::string> vstrings(begin, end);
-    	ROS_INFO("%s", result.c_str());
+		std::string left_encode_str 	= vstrings.substr(2,3);
+		std::string right_encode_str 	= vstrings.substr(4,6);
+		int left_encode 				= GetEncoderValue(left_encode_str); 
+		int right_encode 				= GetEncoderValue(right_encode_str); 
+
+		std::stringstream ssout;
+		ssout <<  left_encode << " "  << right_encode;
+		msg.data = ssout.str() ;
+		ROS_INFO("%s", msg.data.c_str());
+        encoder_pub.publish(msg);
+
+/*    	ROS_INFO("%s", result.c_str());
 		if(vstrings.size() != 4)
 		{	
 			ROS_INFO("Message %s format is not correct", result.c_str());
@@ -64,7 +103,7 @@ int main(int argc, char **argv)
 			msg.data = ssout.str() ;
 			ROS_INFO("%s", msg.data.c_str());
             chatter_pub.publish(msg);
-		}	
+		}	*/
     	
         ros::spinOnce();
 		ROS_INFO("End loop");
