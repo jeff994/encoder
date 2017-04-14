@@ -139,10 +139,18 @@ int main(int argc, char **argv)
     		std::string result; 
 		
    	 	size_t n_size = my_serial.readline(result); 
+		if(n_size ==0) {usleep(100000); continue;}
 		
 		ROS_INFO("value have size: %d", n_size);
 
-		if(n_size >12) 
+		if(n_size == 2)
+		{
+			std::stringstream ss(result);
+                        std::string sValue = ss.str();
+			ROS_INFO(sValue.c_str()); 
+		}
+
+		else if(n_size == 17) 
 		{
 			int left_encode, right_encode, yaw, pitch, roll; 
 			bool yaw_direction, pictch_direction, roll_direction; 
@@ -160,11 +168,10 @@ int main(int argc, char **argv)
 			std::bitset<16> bitSetParameters; 
 			bool bRet		= GetEncoderValue	(sVlaue.substr(1, 2),	left_encode);
 			bRet			= GetEncoderValue	(sVlaue.substr(3, 2),	right_encode); 
-			//Need to add handle for rc car sensor
-			bRet			= HexStringToInt	(sVlaue.substr(9, 1),	yaw);
-			bRet			= HexStringToInt	(sVlaue.substr(10, 1),	pitch);
-			bRet			= HexStringToInt	(sVlaue.substr(11, 1),	roll);
-			bRet			= GetOtherFlags		(sVlaue.substr(12, 2),	bitSetParameters);
+			bRet			= HexStringToInt	(sVlaue.substr(5, 1),	yaw);
+			bRet			= HexStringToInt	(sVlaue.substr(6, 1),	pitch);
+			bRet			= HexStringToInt	(sVlaue.substr(7, 1),	roll);
+			bRet			= GetOtherFlags		(sVlaue.substr(8, 2),	bitSetParameters);
 
 
 		// Reading the parameters from bitset parameters 
@@ -194,6 +201,13 @@ int main(int argc, char **argv)
 			msg.data = ssout.str() ;
 			ROS_INFO("%s", msg.data.c_str());
         		encoder_pub.publish(msg);
+		}
+		else
+		{
+			  std::stringstream ss(result);
+
+                        std::string sValue = ss.str();
+			ROS_INFO("Message : %s", sValue.c_str());
 		}
 	
     		ros::spinOnce();
