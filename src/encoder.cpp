@@ -160,10 +160,11 @@ int main(int argc, char **argv)
 			std::bitset<16> bitSetParameters; 
 			bool bRet		= GetEncoderValue	(sVlaue.substr(1, 2),	left_encode);
 			bRet			= GetEncoderValue	(sVlaue.substr(3, 2),	right_encode); 
-			bRet			= HexStringToInt	(sVlaue.substr(5, 1),	yaw);
-			bRet			= HexStringToInt	(sVlaue.substr(6, 1),	pitch);
-			bRet			= HexStringToInt	(sVlaue.substr(7, 1),	roll);
-			bRet			= GetOtherFlags		(sVlaue.substr(8, 2),	bitSetParameters);
+			//Need to add handle for rc car sensor
+			bRet			= HexStringToInt	(sVlaue.substr(9, 1),	yaw);
+			bRet			= HexStringToInt	(sVlaue.substr(10, 1),	pitch);
+			bRet			= HexStringToInt	(sVlaue.substr(11, 1),	roll);
+			bRet			= GetOtherFlags		(sVlaue.substr(12, 2),	bitSetParameters);
 
 
 		// Reading the parameters from bitset parameters 
